@@ -1,0 +1,174 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Bright Data Platform API",
+    "version": "3.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Web Scraper",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Trigger collection",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.brightdata.com/datasets/v3/trigger?dataset_id=DATASET_ID&format=json",
+            "body": {
+              "type": "json",
+              "data": "[{\"url\":\"https://www.airbnb.com/rooms/50122531\"}]"
+            }
+          },
+          "docs": "Trigger an asynchronous Web Scraper collection; returns a snapshot_id."
+        },
+        {
+          "info": {
+            "name": "Scrape (synchronous)",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.brightdata.com/datasets/v3/scrape?dataset_id=DATASET_ID&format=json",
+            "body": {
+              "type": "json",
+              "data": "[{\"url\":\"https://example.com\"}]"
+            }
+          },
+          "docs": "Run a scraper synchronously and return records inline."
+        },
+        {
+          "info": {
+            "name": "Monitor progress",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.brightdata.com/datasets/v3/progress/SNAPSHOT_ID"
+          },
+          "docs": "Poll the status of a snapshot."
+        },
+        {
+          "info": {
+            "name": "Download snapshot",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.brightdata.com/datasets/v3/snapshot/SNAPSHOT_ID?format=json"
+          },
+          "docs": "Download collected records for a ready snapshot."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "SERP",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "SERP request",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.brightdata.com/request",
+            "body": {
+              "type": "json",
+              "data": "{\"zone\":\"serp_api1\",\"url\":\"https://www.google.com/search?q=pizza\",\"format\":\"json\"}"
+            }
+          },
+          "docs": "Structured search-engine results via a SERP zone."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Web Unlocker",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Unlock website",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.brightdata.com/request",
+            "body": {
+              "type": "json",
+              "data": "{\"zone\":\"unlocker1\",\"url\":\"https://example.com\",\"format\":\"raw\",\"method\":\"GET\",\"country\":\"us\"}"
+            }
+          },
+          "docs": "Fetch a single hard-to-reach page via an unlocker zone."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Zones",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get zone status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.brightdata.com/zone?zone=ZONE_NAME"
+          },
+          "docs": "Read a zone's configuration and status."
+        },
+        {
+          "info": {
+            "name": "Add zone",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.brightdata.com/zone",
+            "body": {
+              "type": "json",
+              "data": "{\"zone\":{\"name\":\"my_zone\"},\"plan\":{\"type\":\"unblocker\"}}"
+            }
+          },
+          "docs": "Provision a new proxy zone."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Browser API",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get browser session",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.brightdata.com/browser_sessions/SESSION_ID"
+          },
+          "docs": "Retrieve metadata for a Scraping Browser session. Interactive control runs over the CDP WebSocket (see asyncapi/brightdata-asyncapi.yml)."
+        }
+      ]
+    }
+  ]
+}

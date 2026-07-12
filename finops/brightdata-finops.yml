@@ -1,0 +1,115 @@
+specification: FinOps Framework
+specificationVersion: '1.0'
+schema: https://www.finops.org/framework/
+provider: Bright Data
+providerId: brightdata
+created: '2026-07-12'
+modified: '2026-07-12'
+reconciled: false
+tags:
+- Web Data
+- Web Scraping
+- Proxy
+- SERP
+- Web Unlocker
+- Datasets
+- FinOps
+- Cost Management
+- FOCUS
+description: >-
+  FinOps view of Bright Data spend. Bright Data bills per product on a
+  usage basis: proxy networks and the Scraping Browser are metered by
+  bandwidth (per GB), the Web Unlocker and SERP API are metered per 1,000
+  successful requests, the Web Scraper API is metered per record, and Datasets
+  are priced per record or by subscription. There is no single all-inclusive
+  subscription, so cost allocation is naturally per zone / per product.
+notes: >-
+  Unit rates are usage-based and change frequently; the figures in the
+  companion plans artifact are representative and NOT reconciled against a live
+  account. Reconcile against Bright Data billing exports and the current
+  pricing pages.
+sources:
+- https://brightdata.com/pricing
+- https://docs.brightdata.com
+- https://focus.finops.org/focus-specification/v1-3/
+alignedWith:
+  framework: FinOps Foundation Framework
+  frameworkUrl: https://www.finops.org/framework/
+  dataSpec: FOCUS
+  dataSpecVersion: '1.3'
+  dataSpecUrl: https://focus.finops.org/focus-specification/v1-3/
+publisherName: Bright Data
+serviceCategory: Web Data and Scraping
+billingModel:
+  pricingCategory: Usage-Based
+  billingFrequency: Monthly
+  billingCurrency: USD
+  chargeCategories:
+  - Usage
+  - Purchase
+  - Adjustment
+focusColumns:
+  ServiceName: Bright Data
+  ServiceCategory: Web Data and Scraping
+  ProviderName: Bright Data
+  PublisherName: Bright Data
+  InvoiceIssuerName: Bright Data
+  BillingCurrency: USD
+  ChargeCategory: Usage
+  PricingCategory: Usage-Based
+meters:
+- name: proxy_bandwidth
+  description: Bandwidth consumed through proxy zones (residential/datacenter/ISP/mobile), billed per GB.
+  unit: gigabytes
+  aggregation: sum
+  dimensions:
+  - account
+  - zone
+  - proxy_type
+- name: scraping_browser_bandwidth
+  description: Bandwidth consumed by Scraping Browser CDP sessions, billed per GB.
+  unit: gigabytes
+  aggregation: sum
+  dimensions:
+  - account
+  - zone
+- name: unlocker_requests
+  description: Successful Web Unlocker requests, billed per 1,000.
+  unit: requests
+  aggregation: sum
+  dimensions:
+  - account
+  - zone
+- name: serp_requests
+  description: SERP API requests, billed per 1,000.
+  unit: requests
+  aggregation: sum
+  dimensions:
+  - account
+  - zone
+- name: scraper_records
+  description: Records returned by the Web Scraper API, billed per record.
+  unit: records
+  aggregation: sum
+  dimensions:
+  - account
+  - dataset
+- name: dataset_records
+  description: Records purchased from the Datasets marketplace (one-off or subscription).
+  unit: records
+  aggregation: sum
+  dimensions:
+  - account
+  - dataset
+principles:
+- name: Visibility
+  description: Pull Bright Data usage/billing exports; inspect per-zone bandwidth and per-API request burn.
+- name: Allocation
+  description: Create a zone per workload/team so bandwidth and request spend map cleanly to cost centers.
+- name: Optimization
+  description: Prefer datacenter/ISP proxies where residential is not required; cache and dedupe targets; use per-request APIs (Unlocker/SERP) instead of full browser sessions when JS rendering is unnecessary; commit to monthly tiers to lower unit rates.
+- name: Accountability
+  description: Assign owners per zone; review bandwidth and request spend monthly against budget.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

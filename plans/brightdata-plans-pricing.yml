@@ -1,0 +1,191 @@
+specification: API Commons Plans
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/Plans
+provider: Bright Data
+providerId: brightdata
+created: '2026-07-12'
+modified: '2026-07-12'
+reconciled: false
+tags:
+- Web Data
+- Web Scraping
+- Proxy
+- SERP
+- Web Unlocker
+- Datasets
+- Plans
+description: >-
+  Bright Data prices per product rather than through a single subscription.
+  Proxy networks are billed by bandwidth (per GB), the managed scraping APIs
+  (Web Unlocker, SERP) are billed per 1,000 successful requests, the Web
+  Scraper API is billed per record, and the Scraping Browser is billed by GB
+  of traffic. Each product offers pay-as-you-go plus monthly-commitment tiers
+  (Growth / Business / Enterprise) that lower unit rates with volume. The
+  representative figures below were observed from public pricing pages and
+  third-party trackers and are NOT reconciled against a live account.
+notes: >-
+  Prices change frequently and vary by commitment tier and region. Verify
+  current rates on the per-product pricing pages under
+  https://brightdata.com/pricing before relying on these numbers.
+sources:
+- https://brightdata.com/pricing
+- https://brightdata.com/pricing/proxy-network/residential-proxies
+- https://docs.brightdata.com
+plans:
+- id: brightdata-pay-as-you-go
+  name: Pay-as-you-go
+  type: usage
+  description: >-
+    Metered usage across proxy and scraping products with no monthly
+    commitment; the highest per-unit rates.
+  entries:
+  - label: Residential Proxies
+    name: residential_proxies
+    type: usage
+    metric: bandwidth
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: from ~$8.40 per GB (PAYG)
+    userMultiplied: false
+  - label: Datacenter Proxies
+    name: datacenter_proxies
+    type: usage
+    metric: bandwidth
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: from ~$0.90 per IP / low per-GB rate
+    userMultiplied: false
+  - label: ISP Proxies
+    name: isp_proxies
+    type: usage
+    metric: bandwidth
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: per GB / per IP, see pricing page
+    userMultiplied: false
+  - label: Mobile Proxies
+    name: mobile_proxies
+    type: usage
+    metric: bandwidth
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: per GB, highest proxy tier
+    userMultiplied: false
+  - label: Web Unlocker
+    name: web_unlocker
+    type: usage
+    metric: requests
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1000
+    price: ~$1.50-$3.00 per 1,000 successful requests
+    userMultiplied: false
+  - label: SERP API
+    name: serp_api
+    type: usage
+    metric: requests
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1000
+    price: ~$0.75-$1.50 per 1,000 requests
+    userMultiplied: false
+  - label: Scraping Browser
+    name: scraping_browser
+    type: usage
+    metric: bandwidth
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: per GB of browser traffic, see pricing page
+    userMultiplied: false
+  - label: Web Scraper API
+    name: web_scraper_api
+    type: usage
+    metric: records
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1000
+    price: per 1,000 records (from ~$1.00-$1.50 per 1K)
+    userMultiplied: false
+  elements:
+  - name: Residential / Datacenter / ISP / Mobile Proxies
+  - name: Web Unlocker
+  - name: SERP API
+  - name: Scraping Browser
+  - name: Web Scraper API
+- id: brightdata-monthly-commitment
+  name: Monthly Commitment (Growth / Business)
+  type: subscription
+  description: >-
+    Monthly plans with a spend commitment that lower per-GB and per-1K unit
+    rates as volume grows (for example residential bandwidth dropping toward
+    ~$3/GB on committed plans).
+  entries:
+  - label: Committed Residential Bandwidth
+    name: committed_residential
+    type: usage
+    metric: bandwidth
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: down to ~$3.00 per GB at higher commitments
+    userMultiplied: false
+  elements:
+  - name: Discounted proxy and API unit rates
+  - name: Higher included volumes
+- id: brightdata-datasets
+  name: Datasets
+  type: subscription
+  description: >-
+    Prebuilt / custom dataset access, purchasable as one-off snapshots or a
+    subscription; priced per record or per dataset.
+  entries:
+  - label: Dataset Records
+    name: dataset_records
+    type: usage
+    metric: records
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1000
+    price: per record / subscription, see datasets marketplace
+    userMultiplied: false
+  elements:
+  - name: Marketplace Datasets
+  - name: Custom Datasets
+- id: brightdata-enterprise
+  name: Enterprise
+  type: enterprise
+  description: >-
+    Custom volume pricing, premium SLAs, dedicated account management, and
+    compliance support. Contact Bright Data sales.
+  entries:
+  - label: Enterprise Agreement
+    name: enterprise
+    type: flat
+    metric: contract
+    limit: -1
+    timeFrame: year
+    geo: global
+    unit: 1
+    price: contact sales
+    userMultiplied: false
+  elements:
+  - name: Custom Volume Pricing
+  - name: Premium SLA and Support
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

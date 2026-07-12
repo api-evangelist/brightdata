@@ -1,0 +1,63 @@
+specification: API Commons Rate Limits
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/RateLimits
+provider: Bright Data
+providerId: brightdata
+created: '2026-07-12'
+modified: '2026-07-12'
+reconciled: false
+tags:
+- Web Data
+- Web Scraping
+- Proxy
+- Rate Limiting
+- Quotas
+- Throttling
+description: >-
+  Bright Data enforces per-zone and per-account concurrency and request-rate
+  limits rather than a single global quota. The managed scraping APIs (Web
+  Unlocker, SERP, Web Scraper) and the Scraping Browser have concurrent-request
+  / concurrent-session ceilings that scale with the account plan and can be
+  raised on request. Proxy zones are constrained primarily by bandwidth and
+  concurrency. Specific numeric limits are configured per zone in the control
+  panel and are not reconciled in this artifact.
+notes: >-
+  Verify per-zone concurrency and request-rate caps in the Bright Data control
+  panel and product docs on reconciliation; limits vary by product, plan, and
+  negotiated agreement.
+sources:
+- https://docs.brightdata.com
+- https://brightdata.com/pricing
+responseCodes:
+  throttled: 429
+limits:
+- name: Concurrent Requests (managed APIs)
+  scope: zone
+  metric: concurrent_requests
+  limit: see provider documentation
+  notes: Web Unlocker / SERP / Web Scraper API concurrency ceiling per zone; scales with plan.
+- name: Concurrent Browser Sessions (Scraping Browser)
+  scope: account
+  metric: concurrent_sessions
+  limit: see provider documentation
+  notes: Number of simultaneous CDP browser sessions; scales with plan and can be raised.
+- name: Proxy Concurrency
+  scope: zone
+  metric: concurrent_connections
+  limit: see provider documentation
+  notes: Simultaneous open proxy connections per zone.
+- name: Bandwidth
+  scope: account
+  metric: bandwidth
+  limit: plan-dependent
+  notes: Proxy and Scraping Browser usage is bandwidth-metered (per GB) rather than request-capped.
+policies:
+- name: Per-Zone Configuration
+  description: Limits are set per zone in the control panel; different products/zones have independent ceilings.
+- name: Tiered Limits
+  description: Concurrency ceilings increase with higher plans and can be raised via support / enterprise agreements.
+- name: Backoff Strategy
+  description: Clients should implement retries with exponential backoff and honor 429 responses.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

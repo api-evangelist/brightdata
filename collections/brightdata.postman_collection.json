@@ -1,0 +1,216 @@
+{
+  "info": {
+    "name": "Bright Data Platform API",
+    "description": "Bright Data REST platform APIs (Web Scraper, SERP, Web Unlocker, Zones, Browser API session). Bearer token auth. The Scraping Browser CDP WebSocket surface is described in asyncapi/brightdata-asyncapi.yml, not here.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.brightdata.com"
+    }
+  ],
+  "item": [
+    {
+      "name": "Web Scraper",
+      "item": [
+        {
+          "name": "Trigger collection",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/datasets/v3/trigger?dataset_id=DATASET_ID&format=json",
+              "host": ["{{baseUrl}}"],
+              "path": ["datasets", "v3", "trigger"],
+              "query": [
+                { "key": "dataset_id", "value": "DATASET_ID" },
+                { "key": "format", "value": "json" }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  { \"url\": \"https://www.airbnb.com/rooms/50122531\" }\n]",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Trigger an asynchronous Web Scraper collection; returns a snapshot_id."
+          }
+        },
+        {
+          "name": "Scrape (synchronous)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/datasets/v3/scrape?dataset_id=DATASET_ID&format=json",
+              "host": ["{{baseUrl}}"],
+              "path": ["datasets", "v3", "scrape"],
+              "query": [
+                { "key": "dataset_id", "value": "DATASET_ID" },
+                { "key": "format", "value": "json" }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  { \"url\": \"https://example.com\" }\n]",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Run a scraper synchronously and return records inline."
+          }
+        },
+        {
+          "name": "Monitor progress",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/datasets/v3/progress/SNAPSHOT_ID",
+              "host": ["{{baseUrl}}"],
+              "path": ["datasets", "v3", "progress", "SNAPSHOT_ID"]
+            },
+            "description": "Poll the status of a snapshot."
+          }
+        },
+        {
+          "name": "Download snapshot",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/datasets/v3/snapshot/SNAPSHOT_ID?format=json",
+              "host": ["{{baseUrl}}"],
+              "path": ["datasets", "v3", "snapshot", "SNAPSHOT_ID"],
+              "query": [
+                { "key": "format", "value": "json" }
+              ]
+            },
+            "description": "Download collected records for a ready snapshot."
+          }
+        }
+      ]
+    },
+    {
+      "name": "SERP",
+      "item": [
+        {
+          "name": "SERP request",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/request",
+              "host": ["{{baseUrl}}"],
+              "path": ["request"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"zone\": \"serp_api1\",\n  \"url\": \"https://www.google.com/search?q=pizza\",\n  \"format\": \"json\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Structured search-engine results via a SERP zone."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Web Unlocker",
+      "item": [
+        {
+          "name": "Unlock website",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/request",
+              "host": ["{{baseUrl}}"],
+              "path": ["request"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"zone\": \"unlocker1\",\n  \"url\": \"https://example.com\",\n  \"format\": \"raw\",\n  \"method\": \"GET\",\n  \"country\": \"us\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Fetch a single hard-to-reach page via an unlocker zone."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Zones",
+      "item": [
+        {
+          "name": "Get zone status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/zone?zone=ZONE_NAME",
+              "host": ["{{baseUrl}}"],
+              "path": ["zone"],
+              "query": [
+                { "key": "zone", "value": "ZONE_NAME" }
+              ]
+            },
+            "description": "Read a zone's configuration and status."
+          }
+        },
+        {
+          "name": "Add zone",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/zone",
+              "host": ["{{baseUrl}}"],
+              "path": ["zone"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"zone\": { \"name\": \"my_zone\" },\n  \"plan\": { \"type\": \"unblocker\" }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Provision a new proxy zone."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Browser API",
+      "item": [
+        {
+          "name": "Get browser session",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/browser_sessions/SESSION_ID",
+              "host": ["{{baseUrl}}"],
+              "path": ["browser_sessions", "SESSION_ID"]
+            },
+            "description": "Retrieve metadata for a Scraping Browser session. Interactive control runs over the CDP WebSocket (see asyncapi/brightdata-asyncapi.yml)."
+          }
+        }
+      ]
+    }
+  ]
+}

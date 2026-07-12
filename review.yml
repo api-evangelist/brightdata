@@ -1,0 +1,119 @@
+aid: brightdata
+name: Bright Data
+review:
+  question: Does Bright Data expose a documented public WebSocket API?
+  answer: true
+  date: '2026-07-12'
+  reviewer: API Evangelist
+  asyncapiSpecCreated: true
+  asyncapiScopeNote: |
+    Bright Data's Scraping Browser (Browser API) exposes a real, documented
+    Chrome DevTools Protocol (CDP) endpoint over a secure WebSocket
+    ('wss://brd.superproxy.io:9222'). CDP is a bidirectional JSON-RPC
+    protocol carried over a WebSocket connection; Puppeteer, Playwright, and
+    Selenium connect to this endpoint (browserWSEndpoint / connect_over_cdp).
+    Bright Data further publishes custom CDP commands over the same socket
+    (Captcha.solve, Captcha.waitForSolve, Browser.getSessionId,
+    Proxy.useSession, Emulation.setDevice, Unblocker.enableAdBlock). Because
+    this is a genuine, documented public WebSocket surface, an AsyncAPI 2.6
+    document was authored at asyncapi/brightdata-asyncapi.yml. This is
+    distinct from the REST platform APIs (Web Scraper, SERP, Web Unlocker,
+    Zones, Datasets), which are ordinary HTTPS request/response endpoints.
+findings:
+  summary: |
+    Yes. Bright Data publishes a public WebSocket API in the form of the
+    Scraping Browser / Browser API CDP endpoint. The documented connection
+    string is a wss:// URL - 'wss://brd-customer-<CUSTOMER_ID>-zone-<ZONE>:
+    <PASSWORD>@brd.superproxy.io:9222' - over which the full Chrome DevTools
+    Protocol (bidirectional JSON-RPC) flows. Automation clients (Puppeteer
+    via browserWSEndpoint, Playwright via connect_over_cdp, Selenium) attach
+    to this socket, and Bright Data layers custom CDP domains on top for
+    CAPTCHA solving, session control, device emulation, and ad blocking.
+
+    Separately, Bright Data operates a set of REST (HTTPS) APIs under
+    https://api.brightdata.com: the Web Scraper API (dataset trigger /
+    progress / snapshot), a synchronous scrape endpoint, the SERP API and
+    Web Unlocker (both POST /request with a zone), account/zone management
+    (POST /zone, GET /zone), and the marketplace Datasets API. These are
+    request/response HTTP, not WebSocket. The proxy network is reached over
+    an HTTP(S)/SOCKS superproxy gateway (brd.superproxy.io), not a WebSocket.
+
+    WebSocket PRECISION: the affirmative answer here rests specifically on
+    the CDP-over-wss Scraping Browser endpoint, which is documented and
+    publicly usable. No general-purpose realtime data-push WebSocket (e.g.
+    a streaming results feed) is documented outside the CDP browser channel.
+  transports:
+    - protocol: WebSocket (CDP)
+      scheme: wss
+      endpoint: 'wss://brd-customer-<CUSTOMER_ID>-zone-<ZONE>:<PASSWORD>@brd.superproxy.io:9222'
+      documented: true
+      note: Chrome DevTools Protocol over WebSocket; consumed by Puppeteer (browserWSEndpoint), Playwright (connect_over_cdp), and Selenium. Modeled in asyncapi/brightdata-asyncapi.yml.
+    - protocol: REST
+      scheme: https
+      baseURL: https://api.brightdata.com
+      documented: true
+      note: Web Scraper, SERP, Web Unlocker, Zone management, and Datasets APIs. HTTPS request/response.
+    - protocol: Proxy gateway
+      scheme: https/socks
+      endpoint: 'brd.superproxy.io:33335'
+      documented: true
+      note: Superproxy entry point for the residential/datacenter/ISP/mobile proxy networks. Not a WebSocket.
+  endpointsConfirmedWebSocket:
+    - 'wss://brd.superproxy.io:9222 (Scraping Browser / Browser API CDP endpoint, credentials embedded in userinfo)'
+  customCdpCommandsConfirmed:
+    - Captcha.solve
+    - Captcha.waitForSolve
+    - Captcha.setAutoSolve
+    - Browser.getSessionId
+    - Proxy.useSession
+    - Emulation.getSupportedDevices
+    - Emulation.setDevice
+    - Unblocker.enableAdBlock
+    - Unblocker.disableAdBlock
+  endpointsConfirmedRest:
+    - POST https://api.brightdata.com/datasets/v3/trigger
+    - POST https://api.brightdata.com/datasets/v3/scrape
+    - GET  https://api.brightdata.com/datasets/v3/progress/{snapshot_id}
+    - GET  https://api.brightdata.com/datasets/v3/snapshot/{snapshot_id}
+    - POST https://api.brightdata.com/request
+    - POST https://api.brightdata.com/zone
+    - GET  https://api.brightdata.com/zone
+    - GET  https://api.brightdata.com/browser_sessions/{session_id}
+  endpointsModeled:
+    - >-
+      Request/response bodies and query parameters in the OpenAPI document are
+      modeled from Bright Data's published API reference and skills references;
+      field-level schemas (snapshot record shapes, zone objects) are
+      representative and flagged as modeled, not exhaustively reconciled.
+    - >-
+      The marketplace Datasets endpoints (dataset list, search, filter,
+      metadata, deliver) are documented by Bright Data but only the Web
+      Scraper v3 paths are modeled in detail in the OpenAPI file.
+sources:
+  - url: https://docs.brightdata.com/scraping-automation/scraping-browser/cdp-functions/standard
+    type: Documentation
+    note: Standard CDP functions over the wss Scraping Browser endpoint.
+  - url: https://docs.brightdata.com/scraping-automation/scraping-browser/cdp-functions/custom
+    type: Documentation
+    note: Bright Data custom CDP commands (Captcha.solve, Browser.getSessionId, Proxy.useSession, etc.).
+  - url: https://docs.brightdata.com/api-reference/rest-api/scraper/asynchronous-requests
+    type: APIReference
+    note: Web Scraper trigger / progress / snapshot REST endpoints.
+  - url: https://docs.brightdata.com/api-reference/rest-api/serp/serp-api
+    type: APIReference
+    note: SERP API - POST /request with a SERP zone.
+  - url: https://docs.brightdata.com/api-reference/rest-api/unlocker/unlock-website
+    type: APIReference
+    note: Web Unlocker - POST /request with an unlocker zone.
+  - url: https://docs.brightdata.com/api-reference/account-management-api/Add_a_Zone
+    type: APIReference
+    note: Zone management - POST /zone, GET /zone.
+actions:
+  asyncapiPath: asyncapi/brightdata-asyncapi.yml
+  apisYmlUpdated: true
+  reason: |
+    A documented public WebSocket surface exists (CDP over wss via the
+    Scraping Browser). An AsyncAPI 2.6 document was authored describing the
+    wss server, the CDP JSON-RPC message exchange, and Bright Data's custom
+    CDP commands. The Browser API entry in apis.yml links the AsyncAPI file;
+    the REST APIs link the OpenAPI file.

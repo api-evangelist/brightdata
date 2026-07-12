@@ -1,0 +1,28 @@
+generated: '2026-07-12'
+method: derived
+source: openapi/brightdata-openapi.yml
+summary:
+  types:
+  - http
+  - userPassword
+schemes:
+- name: api_token
+  type: http
+  scheme: bearer
+  bearerFormat: apiKey
+  description: >-
+    Bright Data platform API token from the control panel, sent as
+    'Authorization: Bearer <API_KEY>' on all api.brightdata.com REST calls
+    (Web Scraper, SERP, Web Unlocker, Zones, Browser API session).
+  sources:
+  - openapi/brightdata-openapi.yml
+- name: zone_credentials
+  type: userPassword
+  description: >-
+    Proxy and Scraping Browser zones authenticate with zone credentials
+    (username 'brd-customer-<CUSTOMER_ID>-zone-<ZONE>' and the zone password).
+    For the Scraping Browser these are embedded in the CDP WebSocket URL
+    userinfo ('wss://...@brd.superproxy.io:9222'); for proxy traffic they are
+    sent as HTTP(S)/SOCKS proxy credentials against brd.superproxy.io.
+  sources:
+  - asyncapi/brightdata-asyncapi.yml

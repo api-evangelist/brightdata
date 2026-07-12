@@ -1,0 +1,194 @@
+aid: brightdata
+url: https://raw.githubusercontent.com/api-evangelist/brightdata/refs/heads/main/apis.yml
+name: Bright Data
+kind: company
+description: Bright Data is a web data platform providing a global proxy network
+  (residential, datacenter, ISP, mobile), pre-built Web Scraper APIs for 100+ sites,
+  a SERP API, the Web Unlocker, ready-made Datasets, and a Scraping Browser (Browser
+  API) that exposes a real Chrome DevTools Protocol endpoint over WebSocket for
+  Puppeteer, Playwright, and Selenium automation.
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+tags:
+- Web Data
+- Web Scraping
+- Web Intelligence
+- Proxy
+- Data Extraction
+- SERP
+- Web Unlocker
+- Datasets
+- Data Collection
+- Browser Automation
+created: '2026-07-12'
+modified: '2026-07-12'
+specificationVersion: '0.19'
+apis:
+- aid: brightdata:brightdata-web-scraper-api
+  name: Bright Data Web Scraper API
+  tags:
+  - Web Scraping
+  - Data Extraction
+  - Datasets
+  - Data Collection
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://docs.brightdata.com/api-reference/rest-api/scraper/asynchronous-requests
+  baseURL: https://api.brightdata.com
+  properties:
+  - url: https://docs.brightdata.com/scraping-automation/web-scraper-api/overview
+    type: Documentation
+  - url: https://docs.brightdata.com/api-reference/rest-api/scraper/asynchronous-requests
+    type: APIReference
+  - url: openapi/brightdata-openapi.yml
+    type: OpenAPI
+  - url: collections/brightdata.postman_collection.json
+    type: PostmanCollection
+  - url: collections/brightdata.opencollection.json
+    type: OpenCollection
+  description: Pre-built scrapers for 100+ popular websites (Amazon, LinkedIn,
+    Instagram, TikTok, and more). Trigger an asynchronous collection with
+    POST /datasets/v3/trigger, poll /datasets/v3/progress/{snapshot_id}, and
+    retrieve results from /datasets/v3/snapshot/{snapshot_id}; a synchronous
+    /datasets/v3/scrape endpoint is also documented.
+- aid: brightdata:brightdata-serp-api
+  name: Bright Data SERP API
+  tags:
+  - SERP
+  - Search
+  - Web Data
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://docs.brightdata.com/api-reference/rest-api/serp/serp-api
+  baseURL: https://api.brightdata.com
+  properties:
+  - url: https://docs.brightdata.com/scraping-automation/serp-api/overview
+    type: Documentation
+  - url: https://docs.brightdata.com/api-reference/rest-api/serp/serp-api
+    type: APIReference
+  - url: openapi/brightdata-openapi.yml
+    type: OpenAPI
+  - url: collections/brightdata.postman_collection.json
+    type: PostmanCollection
+  - url: collections/brightdata.opencollection.json
+    type: OpenCollection
+  description: Structured search-engine results (Google, Bing, and others) via a
+    single POST /request call carrying a SERP zone, target search URL, and the
+    desired response format (raw HTML or parsed JSON).
+- aid: brightdata:brightdata-web-unlocker-api
+  name: Bright Data Web Unlocker API
+  tags:
+  - Web Unlocker
+  - Data Extraction
+  - Web Data
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://docs.brightdata.com/api-reference/rest-api/unlocker/unlock-website
+  baseURL: https://api.brightdata.com
+  properties:
+  - url: https://docs.brightdata.com/scraping-automation/web-unlocker/introduction
+    type: Documentation
+  - url: https://docs.brightdata.com/api-reference/rest-api/unlocker/unlock-website
+    type: APIReference
+  - url: openapi/brightdata-openapi.yml
+    type: OpenAPI
+  - url: collections/brightdata.postman_collection.json
+    type: PostmanCollection
+  - url: collections/brightdata.opencollection.json
+    type: OpenCollection
+  description: Fetches a single hard-to-reach page via POST /request with an
+    unlocker zone, handling proxy rotation, CAPTCHA solving, and JavaScript
+    rendering; supports raw, JSON, markdown, and screenshot response formats and
+    an optional async mode.
+- aid: brightdata:brightdata-proxy-zone-management-api
+  name: Bright Data Proxy & Zone Management API
+  tags:
+  - Proxy
+  - Zones
+  - Account Management
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://docs.brightdata.com/api-reference/account-management-api/Add_a_Zone
+  baseURL: https://api.brightdata.com
+  properties:
+  - url: https://docs.brightdata.com/api-reference/account-management-api/introduction
+    type: Documentation
+  - url: https://docs.brightdata.com/api-reference/account-management-api/Add_a_Zone
+    type: APIReference
+  - url: openapi/brightdata-openapi.yml
+    type: OpenAPI
+  - url: collections/brightdata.postman_collection.json
+    type: PostmanCollection
+  - url: collections/brightdata.opencollection.json
+    type: OpenCollection
+  description: Account-management API for provisioning proxy products - add a zone
+    (POST /zone), read zone configuration and status (GET /zone), and manage
+    static datacenter/ISP IPs. Proxy traffic itself is routed through the
+    superproxy gateway (brd.superproxy.io).
+- aid: brightdata:brightdata-datasets-api
+  name: Bright Data Datasets API
+  tags:
+  - Datasets
+  - Web Data
+  - Data Collection
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://docs.brightdata.com/api-reference/marketplace-dataset-api/get-dataset-list
+  baseURL: https://api.brightdata.com
+  properties:
+  - url: https://docs.brightdata.com/datasets/marketplace-datasets/overview
+    type: Documentation
+  - url: https://docs.brightdata.com/api-reference/marketplace-dataset-api/get-dataset-list
+    type: APIReference
+  - url: openapi/brightdata-openapi.yml
+    type: OpenAPI
+  - url: collections/brightdata.postman_collection.json
+    type: PostmanCollection
+  - url: collections/brightdata.opencollection.json
+    type: OpenCollection
+  description: Marketplace dataset access - list available datasets, search or
+    filter a dataset, read dataset metadata, and deliver a snapshot to external
+    storage or a webhook.
+- aid: brightdata:brightdata-browser-api
+  name: Bright Data Browser API (Scraping Browser)
+  tags:
+  - Browser Automation
+  - Web Scraping
+  - WebSocket
+  - CDP
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://docs.brightdata.com/scraping-automation/scraping-browser/overview
+  baseURL: https://api.brightdata.com
+  properties:
+  - url: https://docs.brightdata.com/scraping-automation/scraping-browser/overview
+    type: Documentation
+  - url: https://docs.brightdata.com/scraping-automation/scraping-browser/cdp-functions/standard
+    type: APIReference
+  - url: asyncapi/brightdata-asyncapi.yml
+    type: AsyncAPI
+  - url: openapi/brightdata-openapi.yml
+    type: OpenAPI
+  description: A cloud headless-browser fleet with built-in unblocking that speaks
+    the Chrome DevTools Protocol (CDP) over a real WebSocket endpoint -
+    'wss://brd.superproxy.io:9222' - for Puppeteer, Playwright, and Selenium,
+    plus Bright Data custom CDP commands (Captcha.solve, Browser.getSessionId,
+    Proxy.useSession). Session metadata is read over REST at
+    /browser_sessions/{session_id}. Modeled in the AsyncAPI document.
+common:
+- type: DomainSecurity
+  url: security/brightdata-domain-security.yml
+- type: Authentication
+  url: authentication/brightdata-authentication.yml
+- type: GitHubOrganization
+  url: https://github.com/brightdata
+- type: LinkedIn
+  url: https://www.linkedin.com/company/bright-data
+- type: Website
+  url: https://brightdata.com/
+- type: Documentation
+  url: https://docs.brightdata.com
+- type: Plans
+  url: plans/brightdata-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/brightdata-rate-limits.yml
+- type: FinOps
+  url: finops/brightdata-finops.yml
+- type: Blog
+  url: https://brightdata.com/blog
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

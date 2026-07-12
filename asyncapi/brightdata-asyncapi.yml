@@ -1,0 +1,238 @@
+asyncapi: '2.6.0'
+id: 'urn:com:brightdata:scraping-browser:cdp'
+info:
+  title: Bright Data Scraping Browser (Browser API) - CDP over WebSocket
+  version: '1.0.0'
+  description: |
+    AsyncAPI 2.6 description of Bright Data's **Scraping Browser / Browser API**
+    WebSocket surface.
+
+    Bright Data DOES publish a public WebSocket API. The Scraping Browser is a
+    cloud headless-browser fleet that speaks the **Chrome DevTools Protocol
+    (CDP)** over a secure WebSocket. Clients open the connection with a
+    `wss://` URL of the form:
+
+      'wss://brd-customer-<CUSTOMER_ID>-zone-<ZONE>:<PASSWORD>@brd.superproxy.io:9222'
+
+    Credentials (customer id, zone name, zone password) are carried in the
+    WebSocket URL userinfo component. Automation frameworks attach to this
+    endpoint:
+      - Puppeteer: `puppeteer.connect({ browserWSEndpoint: '<wss URL>' })`
+      - Playwright: `chromium.connect_over_cdp('<wss URL>')`
+      - Selenium:   remote CDP session
+
+    CDP itself is a bidirectional JSON-RPC 2.0 protocol: the client sends
+    command messages `{ "id": N, "method": "Domain.command", "params": {...} }`
+    and the server returns matching results `{ "id": N, "result": {...} }`
+    plus asynchronous events `{ "method": "Domain.event", "params": {...} }`.
+    All standard Chromium CDP domains (Page, Network, Runtime, DOM, Input, ...)
+    are available. Bright Data adds custom CDP commands over the same socket
+    for unblocking and session control.
+
+    This document models the WebSocket transport and the message envelopes; it
+    does not attempt to enumerate the full Chromium CDP domain surface, which
+    is defined by the upstream Chrome DevTools Protocol specification.
+  contact:
+    name: API Evangelist
+    email: kin@apievangelist.com
+    url: https://apievangelist.com
+  license:
+    name: API documentation - Bright Data Terms of Service
+    url: https://brightdata.com/legal/tos
+  x-transport-notes:
+    transport: WebSocket (Chrome DevTools Protocol, JSON-RPC 2.0)
+    protocol: wss
+    direction: bidirectional (client-command / server-result + server-event)
+    host: brd.superproxy.io
+    port: 9222
+    urlTemplate: 'wss://brd-customer-<CUSTOMER_ID>-zone-<ZONE>:<PASSWORD>@brd.superproxy.io:9222'
+    consumedBy: 'Puppeteer (browserWSEndpoint), Playwright (connect_over_cdp), Selenium'
+    source: https://docs.brightdata.com/scraping-automation/scraping-browser/cdp-functions/standard
+defaultContentType: application/json
+servers:
+  scrapingBrowser:
+    url: 'brd.superproxy.io:9222'
+    protocol: wss
+    description: |
+      Bright Data Scraping Browser CDP gateway. Open a WebSocket to
+      'wss://brd.superproxy.io:9222' with authentication credentials embedded
+      in the URL userinfo as
+      `brd-customer-<CUSTOMER_ID>-zone-<ZONE>:<PASSWORD>`. Country and other
+      targeting flags may be appended to the username component
+      (for example `-country-us`).
+    security:
+      - userInfoCredentials: []
+channels:
+  /:
+    description: |
+      The single CDP WebSocket channel. After the socket is established, the
+      client and server exchange Chrome DevTools Protocol JSON-RPC messages.
+      The client publishes CDP command envelopes; the server publishes CDP
+      command results and asynchronous CDP events (including Bright Data
+      custom events such as `Captcha.solveFinished`).
+    bindings:
+      ws:
+        bindingVersion: '0.1.0'
+    publish:
+      operationId: sendCdpCommand
+      summary: Send a CDP command (client to browser).
+      description: |
+        Publish a JSON-RPC 2.0 CDP command over the WebSocket. `method` is a
+        `Domain.command` string - either a standard Chromium CDP command
+        (e.g. `Page.navigate`, `Runtime.evaluate`) or a Bright Data custom
+        command (e.g. `Captcha.solve`, `Captcha.waitForSolve`,
+        `Browser.getSessionId`, `Proxy.useSession`, `Emulation.setDevice`,
+        `Unblocker.enableAdBlock`).
+      message:
+        $ref: '#/components/messages/CdpCommand'
+    subscribe:
+      operationId: receiveCdpMessage
+      summary: Receive a CDP result or event (browser to client).
+      description: |
+        Subscribe to messages emitted by the browser: JSON-RPC results keyed
+        by the originating command `id`, and asynchronous CDP events keyed by
+        `method`. Bright Data custom events include `Captcha.detected`,
+        `Captcha.solveFinished`, and `Captcha.solveFailed`.
+      message:
+        oneOf:
+          - $ref: '#/components/messages/CdpResult'
+          - $ref: '#/components/messages/CdpEvent'
+components:
+  securitySchemes:
+    userInfoCredentials:
+      type: userPassword
+      description: |
+        Bright Data zone credentials embedded in the WebSocket URL userinfo:
+        username `brd-customer-<CUSTOMER_ID>-zone-<ZONE>` and password
+        `<ZONE_PASSWORD>`. These are the Scraping Browser zone credentials from
+        the Bright Data control panel, not the platform REST API bearer token.
+  messages:
+    CdpCommand:
+      name: CdpCommand
+      title: CDP command (JSON-RPC request)
+      summary: A Chrome DevTools Protocol command sent by the client.
+      contentType: application/json
+      description: |
+        JSON-RPC 2.0 request. `method` may be a standard Chromium CDP command
+        or a Bright Data custom command.
+      payload:
+        $ref: '#/components/schemas/CdpCommand'
+      examples:
+        - name: navigate
+          summary: Navigate the page (standard CDP)
+          payload:
+            id: 1
+            method: Page.navigate
+            params:
+              url: https://example.com
+        - name: solveCaptcha
+          summary: Trigger Bright Data CAPTCHA solver (custom CDP)
+          payload:
+            id: 2
+            method: Captcha.solve
+            params:
+              detectTimeout: 30000
+        - name: getSessionId
+          summary: Retrieve the current Bright Data session id (custom CDP)
+          payload:
+            id: 3
+            method: Browser.getSessionId
+            params: {}
+    CdpResult:
+      name: CdpResult
+      title: CDP result (JSON-RPC response)
+      summary: A result returned by the browser for a prior command id.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/CdpResult'
+      examples:
+        - name: captchaResult
+          summary: Result of Captcha.solve
+          payload:
+            id: 2
+            result:
+              status: solve_finished
+        - name: sessionIdResult
+          summary: Result of Browser.getSessionId
+          payload:
+            id: 3
+            result:
+              sessionId: brd_sess_01hxyz
+    CdpEvent:
+      name: CdpEvent
+      title: CDP event (JSON-RPC notification)
+      summary: An asynchronous event emitted by the browser.
+      contentType: application/json
+      description: |
+        JSON-RPC notification (no `id`). Includes standard Chromium CDP events
+        and Bright Data custom events such as `Captcha.detected`,
+        `Captcha.solveFinished`, and `Captcha.solveFailed`.
+      payload:
+        $ref: '#/components/schemas/CdpEvent'
+      examples:
+        - name: captchaDetected
+          summary: Bright Data detected a CAPTCHA
+          payload:
+            method: Captcha.detected
+            params: {}
+        - name: captchaSolved
+          summary: Bright Data finished solving a CAPTCHA
+          payload:
+            method: Captcha.solveFinished
+            params:
+              status: success
+  schemas:
+    CdpCommand:
+      type: object
+      description: JSON-RPC 2.0 CDP command envelope.
+      required:
+        - id
+        - method
+      properties:
+        id:
+          type: integer
+          description: Client-assigned request id; the matching result echoes it.
+        method:
+          type: string
+          description: 'CDP method name in Domain.command form (e.g. Page.navigate, Captcha.solve).'
+        params:
+          type: object
+          description: Command parameters; shape depends on the method.
+          additionalProperties: true
+        sessionId:
+          type: string
+          description: Optional CDP target/session id when using the flat session protocol.
+    CdpResult:
+      type: object
+      description: JSON-RPC 2.0 CDP result envelope.
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+          description: The id of the command this result answers.
+        result:
+          type: object
+          description: Command result payload; shape depends on the method.
+          additionalProperties: true
+        error:
+          type: object
+          description: Present instead of result when the command failed.
+          properties:
+            code:
+              type: integer
+            message:
+              type: string
+    CdpEvent:
+      type: object
+      description: JSON-RPC 2.0 CDP event notification envelope (no id).
+      required:
+        - method
+      properties:
+        method:
+          type: string
+          description: 'CDP event name in Domain.event form (e.g. Captcha.solveFinished).'
+        params:
+          type: object
+          description: Event parameters; shape depends on the event.
+          additionalProperties: true
