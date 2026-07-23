@@ -1,0 +1,102 @@
+openapi: 3.0.3
+info:
+  title: Bright Data Platform Browser API Zones API
+  description: OpenAPI description of Bright Data's REST platform APIs served from https://api.brightdata.com - the Web Scraper API (dataset trigger, progress, snapshot), the synchronous scrape endpoint, the SERP API and Web Unlocker (both POST /request with a zone), account/zone management, and a Browser API session-metadata endpoint. Paths and methods are grounded in Bright Data's published API reference; request/response schemas are representative and modeled, not exhaustively reconciled. The Scraping Browser's Chrome DevTools Protocol WebSocket surface is described separately in asyncapi/brightdata-asyncapi.yml.
+  termsOfService: https://brightdata.com/legal/tos
+  contact:
+    name: Bright Data Support
+    url: https://brightdata.com/contact
+  version: '3.0'
+servers:
+- url: https://api.brightdata.com
+  description: Bright Data platform API base host.
+security:
+- bearerAuth: []
+tags:
+- name: Zones
+  description: Account and proxy zone management.
+paths:
+  /zone:
+    get:
+      operationId: getZone
+      tags:
+      - Zones
+      summary: Get zone status and configuration.
+      parameters:
+      - name: zone
+        in: query
+        required: true
+        description: Zone name.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Zone configuration and status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Zone'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      operationId: addZone
+      tags:
+      - Zones
+      summary: Add a new proxy zone.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddZoneRequest'
+      responses:
+        '201':
+          description: Zone added.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Zone'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  responses:
+    Unauthorized:
+      description: Missing or invalid API token.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+  schemas:
+    Zone:
+      type: object
+      description: Zone configuration and status. (Modeled.)
+      additionalProperties: true
+      properties:
+        name:
+          type: string
+        status:
+          type: string
+        type:
+          type: string
+          description: Proxy product type (e.g. residential, datacenter, isp, mobile, unblocker, serp).
+    AddZoneRequest:
+      type: object
+      description: Request body to create a zone. (Modeled.)
+      properties:
+        zone:
+          type: object
+          properties:
+            name:
+              type: string
+        plan:
+          type: object
+          additionalProperties: true
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API key
+      description: 'Bright Data API token from the control panel, sent as `Authorization: Bearer <API_KEY>`.'

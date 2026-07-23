@@ -1,0 +1,234 @@
+openapi: 3.0.3
+info:
+  title: Bright Data Platform Browser API Web Scraper API
+  description: OpenAPI description of Bright Data's REST platform APIs served from https://api.brightdata.com - the Web Scraper API (dataset trigger, progress, snapshot), the synchronous scrape endpoint, the SERP API and Web Unlocker (both POST /request with a zone), account/zone management, and a Browser API session-metadata endpoint. Paths and methods are grounded in Bright Data's published API reference; request/response schemas are representative and modeled, not exhaustively reconciled. The Scraping Browser's Chrome DevTools Protocol WebSocket surface is described separately in asyncapi/brightdata-asyncapi.yml.
+  termsOfService: https://brightdata.com/legal/tos
+  contact:
+    name: Bright Data Support
+    url: https://brightdata.com/contact
+  version: '3.0'
+servers:
+- url: https://api.brightdata.com
+  description: Bright Data platform API base host.
+security:
+- bearerAuth: []
+tags:
+- name: Web Scraper
+  description: Trigger dataset collections and retrieve snapshots.
+paths:
+  /datasets/v3/trigger:
+    post:
+      operationId: triggerCollection
+      tags:
+      - Web Scraper
+      summary: Trigger an asynchronous Web Scraper collection.
+      description: Starts an asynchronous collection for a pre-built scraper (dataset). Returns a snapshot_id used to poll progress and download results.
+      parameters:
+      - name: dataset_id
+        in: query
+        required: true
+        description: Scraper / dataset identifier (e.g. gd_l1viktl72bvl7bjuj0).
+        schema:
+          type: string
+      - name: format
+        in: query
+        required: false
+        description: Output format.
+        schema:
+          type: string
+          enum:
+          - json
+          - ndjson
+          - jsonl
+          - csv
+      - name: include_errors
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: custom_output_fields
+        in: query
+        required: false
+        description: Pipe- or comma-delimited list of fields to return.
+        schema:
+          type: string
+      - name: notify
+        in: query
+        required: false
+        description: Webhook URL notified when the snapshot is ready.
+        schema:
+          type: string
+          format: uri
+      requestBody:
+        required: true
+        description: Array of input objects for the scraper (commonly a url per item).
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScraperInput'
+            example:
+            - url: https://www.airbnb.com/rooms/50122531
+            - url: https://www.airbnb.com/rooms/50127677
+      responses:
+        '200':
+          description: Collection triggered; snapshot identifier returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TriggerResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /datasets/v3/scrape:
+    post:
+      operationId: scrapeSynchronous
+      tags:
+      - Web Scraper
+      summary: Synchronous Web Scraper collection.
+      description: Runs a scraper synchronously and returns records in the response body (best for small, latency-sensitive jobs).
+      parameters:
+      - name: dataset_id
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: format
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - json
+          - ndjson
+          - jsonl
+          - csv
+      - name: include_errors
+        in: query
+        required: false
+        schema:
+          type: boolean
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScraperInput'
+      responses:
+        '200':
+          description: Scraped records.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /datasets/v3/progress/{snapshot_id}:
+    get:
+      operationId: getSnapshotProgress
+      tags:
+      - Web Scraper
+      summary: Monitor snapshot collection progress.
+      parameters:
+      - name: snapshot_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Snapshot progress status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProgressResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /datasets/v3/snapshot/{snapshot_id}:
+    get:
+      operationId: getSnapshotData
+      tags:
+      - Web Scraper
+      summary: Download snapshot data.
+      parameters:
+      - name: snapshot_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: format
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - json
+          - ndjson
+          - jsonl
+          - csv
+      responses:
+        '200':
+          description: Collected records for the snapshot.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: true
+        '202':
+          description: Snapshot not ready yet; still running.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  responses:
+    Unauthorized:
+      description: Missing or invalid API token.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+  schemas:
+    TriggerResponse:
+      type: object
+      description: Response of a trigger call. (Modeled.)
+      properties:
+        snapshot_id:
+          type: string
+          description: Identifier used to poll progress and download results.
+    ScraperInput:
+      type: array
+      description: Array of input objects passed to a scraper. Most scrapers accept a `url` per item; some accept additional discovery parameters.
+      items:
+        type: object
+        properties:
+          url:
+            type: string
+            format: uri
+        additionalProperties: true
+    ProgressResponse:
+      type: object
+      description: Snapshot progress. (Modeled.)
+      properties:
+        snapshot_id:
+          type: string
+        status:
+          type: string
+          enum:
+          - running
+          - ready
+          - failed
+        dataset_id:
+          type: string
+        records:
+          type: integer
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API key
+      description: 'Bright Data API token from the control panel, sent as `Authorization: Bearer <API_KEY>`.'

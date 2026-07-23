@@ -1,0 +1,120 @@
+openapi: 3.0.3
+info:
+  title: Bright Data Platform Browser API Web Unlocker API
+  description: OpenAPI description of Bright Data's REST platform APIs served from https://api.brightdata.com - the Web Scraper API (dataset trigger, progress, snapshot), the synchronous scrape endpoint, the SERP API and Web Unlocker (both POST /request with a zone), account/zone management, and a Browser API session-metadata endpoint. Paths and methods are grounded in Bright Data's published API reference; request/response schemas are representative and modeled, not exhaustively reconciled. The Scraping Browser's Chrome DevTools Protocol WebSocket surface is described separately in asyncapi/brightdata-asyncapi.yml.
+  termsOfService: https://brightdata.com/legal/tos
+  contact:
+    name: Bright Data Support
+    url: https://brightdata.com/contact
+  version: '3.0'
+servers:
+- url: https://api.brightdata.com
+  description: Bright Data platform API base host.
+security:
+- bearerAuth: []
+tags:
+- name: Web Unlocker
+  description: Single-page unlocking via zone-based requests.
+paths:
+  /request:
+    post:
+      operationId: sendRequest
+      tags:
+      - Web Unlocker
+      summary: SERP API and Web Unlocker request.
+      description: Single endpoint shared by the SERP API and Web Unlocker. The `zone` field selects the product (a SERP zone or an unlocker zone). Set `async=true` to run asynchronously and retrieve results later.
+      parameters:
+      - name: async
+        in: query
+        required: false
+        description: Run the request asynchronously.
+        schema:
+          type: boolean
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnlockRequest'
+            examples:
+              serp:
+                summary: SERP API request
+                value:
+                  zone: serp_api1
+                  url: https://www.google.com/search?q=pizza
+                  format: json
+              unlocker:
+                summary: Web Unlocker request
+                value:
+                  zone: unlocker1
+                  url: https://example.com
+                  format: raw
+                  method: GET
+                  country: us
+      responses:
+        '200':
+          description: Response body (raw HTML/text, JSON, markdown, or screenshot).
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+            text/html:
+              schema:
+                type: string
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  responses:
+    Unauthorized:
+      description: Missing or invalid API token.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+  schemas:
+    UnlockRequest:
+      type: object
+      required:
+      - zone
+      - url
+      - format
+      properties:
+        zone:
+          type: string
+          description: Zone identifier selecting the product configuration.
+        url:
+          type: string
+          format: uri
+          description: Complete target URL (must include http/https).
+        format:
+          type: string
+          enum:
+          - raw
+          - json
+          description: Response format.
+        method:
+          type: string
+          default: GET
+          description: HTTP method to use against the target.
+        country:
+          type: string
+          description: Two-letter ISO country code for geo-targeting.
+        data_format:
+          type: string
+          enum:
+          - markdown
+          - screenshot
+          description: Optional post-processing of the response body.
+        render:
+          type: boolean
+          description: Enable JavaScript rendering.
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API key
+      description: 'Bright Data API token from the control panel, sent as `Authorization: Bearer <API_KEY>`.'
