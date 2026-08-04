@@ -1,0 +1,22 @@
+{
+  "provider": "brightdata",
+  "sources": [
+    "brightdata-browser-api-api-openapi.yml",
+    "brightdata-serp-api-openapi.yml",
+    "brightdata-web-scraper-api-openapi.yml",
+    "brightdata-web-unlocker-api-openapi.yml",
+    "brightdata-zones-api-openapi.yml"
+  ],
+  "outputs": [
+    "brightdata-browser-api-api-openapi.yml",
+    "brightdata-serp-api-openapi.yml",
+    "brightdata-web-scraper-api-openapi.yml",
+    "brightdata-web-unlocker-api-openapi.yml",
+    "brightdata-zones-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}
