@@ -1,0 +1,143 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Bright Data Platform Browser API Web Scraper API",
+    "version": "3.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Web Scraper",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Trigger an asynchronous Web Scraper collection.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.brightdata.com/datasets/v3/trigger",
+            "params": [
+              {
+                "name": "dataset_id",
+                "value": "",
+                "type": "query",
+                "description": "Scraper / dataset identifier (e.g. gd_l1viktl72bvl7bjuj0)."
+              },
+              {
+                "name": "format",
+                "value": "",
+                "type": "query",
+                "description": "Output format."
+              },
+              {
+                "name": "include_errors",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "custom_output_fields",
+                "value": "",
+                "type": "query",
+                "description": "Pipe- or comma-delimited list of fields to return."
+              },
+              {
+                "name": "notify",
+                "value": "",
+                "type": "query",
+                "description": "Webhook URL notified when the snapshot is ready."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Starts an asynchronous collection for a pre-built scraper (dataset). Returns a snapshot_id used to poll progress and download results."
+        },
+        {
+          "info": {
+            "name": "Synchronous Web Scraper collection.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.brightdata.com/datasets/v3/scrape",
+            "params": [
+              {
+                "name": "dataset_id",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "format",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "include_errors",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Runs a scraper synchronously and returns records in the response body (best for small, latency-sensitive jobs)."
+        },
+        {
+          "info": {
+            "name": "Monitor snapshot collection progress.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.brightdata.com/datasets/v3/progress/:snapshot_id",
+            "params": [
+              {
+                "name": "snapshot_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Monitor snapshot collection progress."
+        },
+        {
+          "info": {
+            "name": "Download snapshot data.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.brightdata.com/datasets/v3/snapshot/:snapshot_id",
+            "params": [
+              {
+                "name": "snapshot_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "format",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Download snapshot data."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,58 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Bright Data Platform Browser API Zones API",
+    "version": "3.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Zones",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get zone status and configuration.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.brightdata.com/zone",
+            "params": [
+              {
+                "name": "zone",
+                "value": "",
+                "type": "query",
+                "description": "Zone name."
+              }
+            ]
+          },
+          "docs": "Get zone status and configuration."
+        },
+        {
+          "info": {
+            "name": "Add a new proxy zone.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.brightdata.com/zone",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Add a new proxy zone."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

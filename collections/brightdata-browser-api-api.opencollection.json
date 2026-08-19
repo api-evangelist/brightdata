@@ -1,0 +1,42 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Bright Data Platform Browser API API",
+    "version": "3.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Browser API",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get Scraping Browser session metadata.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.brightdata.com/browser_sessions/:session_id",
+            "params": [
+              {
+                "name": "session_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Retrieves metadata for a Scraping Browser session. The interactive browser control itself runs over the CDP WebSocket endpoint documented in asyncapi/brightdata-asyncapi.yml, not this REST call."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,47 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Bright Data Platform Browser API SERP API",
+    "version": "3.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "SERP",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "SERP API and Web Unlocker request.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.brightdata.com/request",
+            "params": [
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "Run the request asynchronously."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Single endpoint shared by the SERP API and Web Unlocker. The `zone` field selects the product (a SERP zone or an unlocker zone). Set `async=true` to run asynchronously and retrieve results later."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
