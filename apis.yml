@@ -7,6 +7,18 @@ description: Bright Data is a web data platform providing a global proxy network
   a SERP API, the Web Unlocker, ready-made Datasets, and a Scraping Browser (Browser
   API) that exposes a real Chrome DevTools Protocol endpoint over WebSocket for
   Puppeteer, Playwright, and Selenium automation.
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: paid
   onboarding: self-serve
