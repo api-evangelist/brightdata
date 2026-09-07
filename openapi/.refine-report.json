@@ -17,6 +17,13 @@
   "archived": [],
   "errors": [],
   "warnings": [],
-  "notes": [],
+  "notes": [
+    "brightdata-browser-api-api-openapi.yml: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
+    "brightdata-serp-api-openapi.yml: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
+    "brightdata-web-scraper-api-openapi.yml: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
+    "brightdata-web-unlocker-api-openapi.yml: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
+    "brightdata-zones-api-openapi.yml: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
   "skipped": []
 }

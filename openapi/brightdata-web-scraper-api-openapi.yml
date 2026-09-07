@@ -1,6 +1,6 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
-  title: Bright Data Platform Browser API Web Scraper API
+  title: Bright Data Platform Browser Web Scraper API
   description: OpenAPI description of Bright Data's REST platform APIs served from https://api.brightdata.com - the Web Scraper API (dataset trigger, progress, snapshot), the synchronous scrape endpoint, the SERP API and Web Unlocker (both POST /request with a zone), account/zone management, and a Browser API session-metadata endpoint. Paths and methods are grounded in Bright Data's published API reference; request/response schemas are representative and modeled, not exhaustively reconciled. The Scraping Browser's Chrome DevTools Protocol WebSocket surface is described separately in asyncapi/brightdata-asyncapi.yml.
   termsOfService: https://brightdata.com/legal/tos
   contact:
@@ -182,24 +182,7 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
-  responses:
-    Unauthorized:
-      description: Missing or invalid API token.
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
   schemas:
-    TriggerResponse:
-      type: object
-      description: Response of a trigger call. (Modeled.)
-      properties:
-        snapshot_id:
-          type: string
-          description: Identifier used to poll progress and download results.
     ScraperInput:
       type: array
       description: Array of input objects passed to a scraper. Most scrapers accept a `url` per item; some accept additional discovery parameters.
@@ -226,6 +209,23 @@ components:
           type: string
         records:
           type: integer
+    TriggerResponse:
+      type: object
+      description: Response of a trigger call. (Modeled.)
+      properties:
+        snapshot_id:
+          type: string
+          description: Identifier used to poll progress and download results.
+  responses:
+    Unauthorized:
+      description: Missing or invalid API token.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
   securitySchemes:
     bearerAuth:
       type: http

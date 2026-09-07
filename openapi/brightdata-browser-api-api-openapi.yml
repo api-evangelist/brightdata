@@ -1,6 +1,6 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
-  title: Bright Data Platform Browser API API
+  title: Bright Data Platform Browser API
   description: OpenAPI description of Bright Data's REST platform APIs served from https://api.brightdata.com - the Web Scraper API (dataset trigger, progress, snapshot), the synchronous scrape endpoint, the SERP API and Web Unlocker (both POST /request with a zone), account/zone management, and a Browser API session-metadata endpoint. Paths and methods are grounded in Bright Data's published API reference; request/response schemas are representative and modeled, not exhaustively reconciled. The Scraping Browser's Chrome DevTools Protocol WebSocket surface is described separately in asyncapi/brightdata-asyncapi.yml.
   termsOfService: https://brightdata.com/legal/tos
   contact:
