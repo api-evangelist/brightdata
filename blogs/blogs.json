@@ -1,0 +1,14 @@
+{
+  "repo": "brightdata",
+  "feeds": [
+    {
+      "source": "https://brightdata.com/blog",
+      "feed_url": "https://brightdata.com/blog",
+      "title": "",
+      "saved": 0,
+      "method": "none"
+    }
+  ],
+  "post_count": 0,
+  "fetched": "2026-10-17T14:53:57Z"
+}
